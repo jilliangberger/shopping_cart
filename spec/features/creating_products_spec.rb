@@ -28,4 +28,49 @@ feature 'Product Managment' do
     expect(page).to have_text('Product was successfully updated')
     expect(page).to have_text('Apple')
   end
+  scenario 'user views an existing product' do
+    product = FactoryGirl.create(:product)
+
+    visit product_path(product)
+    # save_and_open_page
+
+    expect(page).to have_text(product.name)
+    expect(page).to have_text(product.description)
+    expect(page).to have_text(product.price)
+    expect(page).to have_image(product.image_url.downcase)
+  end
+  scenario 'user deletes a product' do
+    product = FactoryGirl.create(:product)
+    product2 = FactoryGirl.create(:product)
+
+    visit products_path
+
+
+    within "#product_#{product.id}" do
+      click_link 'Destroy'
+    end
+    # save_and_open_page
+
+    expect(page).to have_text("Product was successfully destroyed.")
+    expect(page).to_not have_text(product.name)
+    expect(page).to_not have_text(product.description)
+    expect(page).to_not have_text(product.price)
+    expect(page).to_not have_image(product.image_url.downcase)
+  end
+  scenario 'user views a list of products' do
+    product1 = FactoryGirl.create(:product)
+    product2 = FactoryGirl.create(:product)
+
+    visit products_path
+
+    expect(page).to have_text(product1.name)
+    expect(page).to have_text(product1.description)
+    expect(page).to have_text(product1.price)
+    expect(page).to have_image(product1.image_url.downcase)
+
+    expect(page).to have_text(product2.name)
+    expect(page).to have_text(product2.description)
+    expect(page).to have_text(product2.price)
+    expect(page).to have_image(product2.image_url.downcase)
+  end
 end
